@@ -1,6 +1,7 @@
 package com.example.marketplacepuj.ui.features.catalogo.screens
 
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -44,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +66,7 @@ import coil3.compose.AsyncImage
 import com.example.marketplacepuj.BottomNavItem
 import com.example.marketplacepuj.R
 import com.example.marketplacepuj.ui.features.catalogo.viewmodel.CatalogueViewModel
+import com.example.marketplacepuj.ui.features.messages.MessageActivity
 
 
 data class Category(
@@ -182,8 +185,9 @@ val categories = listOf(
 
 
 @Composable
-fun CatalogueNavScreen(navController: NavController, viewModel: CatalogueViewModel) {
-    val categories = viewModel.categories
+fun CatalogueNavScreen(navController: NavController, catalogueViewModel: CatalogueViewModel) {
+    val context = LocalContext.current // Obtén el contexto
+    val categories = catalogueViewModel.categories
     val navControllerCatalogue = rememberNavController()
     NavHost(navControllerCatalogue, startDestination = "screen_a") {
         composable("screen_a") {
@@ -191,33 +195,41 @@ fun CatalogueNavScreen(navController: NavController, viewModel: CatalogueViewMod
                 categories,
                 navController,
                 navControllerCatalogue,
-                viewModel.selectedCategory.value,
-                viewModel.search, {
-                    viewModel.onValueChangedSearch(it)
+                catalogueViewModel.selectedCategory.value,
+                catalogueViewModel.search, {
+                    catalogueViewModel.onValueChangedSearch(it)
                 },
                 {
-                    viewModel.onSearch()
+                    catalogueViewModel.onSearch()
                 }
 
             ) {
-                viewModel.filterByCategory(it)
+                catalogueViewModel.filterByCategory(it)
             }
         }
         composable("screen_b/{productId}", arguments = listOf(navArgument("productId") {
             type = NavType.StringType
         })) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId")
-            val product = viewModel.getProductDetail(productId)
+            val product = catalogueViewModel.getProductDetail(productId)
             product?.let {
-                ProductDetailScreen(navControllerCatalogue, it) {
-                    viewModel.addToCartItem(it)
-                    navControllerCatalogue.popBackStack()
-                }
+                ProductDetailScreen(
+                    navControllerCatalogue,
+                    it,
+                    onAddToCartItem = { product ->
+                        catalogueViewModel.addToCartItem(product)
+                        navControllerCatalogue.popBackStack()
+                    },
+                    onEditClick = {
+                        // Inicia MessageActivity
+                        val intent = Intent(context, MessageActivity::class.java)
+                        context.startActivity(intent)
+                    }
+                )
             }
         }
     }
 }
-
 @Composable
 fun CatalogueScreen(
     categories: List<Category>,

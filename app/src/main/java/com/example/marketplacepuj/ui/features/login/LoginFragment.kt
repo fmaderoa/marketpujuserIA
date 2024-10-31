@@ -1,5 +1,6 @@
-package com.example.marketplacepuj
+package com.example.marketplacepuj.ui.features.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.marketplacepuj.MainActivity
+import com.example.marketplacepuj.R
 import com.example.marketplacepuj.databinding.FragmentLoginBinding
 import com.example.marketplacepuj.ui.features.login.viewmodel.LoginViewModel
 
@@ -42,7 +45,10 @@ class LoginFragment : Fragment() {
         viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
                 // Navega al MessageFragment si el inicio de sesión es exitoso
-                navController.navigate(R.id.messageFragment)
+                //navController.navigate(R.id.messageFragment)
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
             } else {
                 // Muestra un mensaje de error si el inicio de sesión falla
                 // ...

@@ -28,6 +28,8 @@ import com.example.marketplacepuj.ui.features.catalogo.screens.orderItems
 import com.example.marketplacepuj.ui.features.catalogo.viewmodel.CatalogueViewModel
 import com.example.marketplacepuj.ui.features.catalogo.viewmodel.PedidoViewModel
 import com.example.marketplacepuj.ui.theme.MarketplacePUJTheme
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.perf.ktx.performance
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -86,7 +88,10 @@ fun MyApp() {
                     catalogueViewModel.onDeleteCartItem(it)
                 }
             ) {
+                val myTrace = Firebase.performance.newTrace("custom-trace-save-order-IA")
+                myTrace.start()
                 catalogueViewModel.crearPedido()
+                myTrace.stop()
                 navController.navigate(BottomNavItem.Home.route)
             }
         }

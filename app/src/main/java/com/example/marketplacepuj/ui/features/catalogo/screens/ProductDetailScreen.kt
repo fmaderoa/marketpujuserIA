@@ -59,7 +59,7 @@ fun ProductPreview() {
             "https://via.placeholder.com/150",
             999.99,
             description = "Your product very smart"
-        ), {}
+        ), {},{}
     )
 
 }
@@ -69,7 +69,8 @@ fun ProductPreview() {
 fun ProductDetailScreen(
     navController: NavController,
     product: Product,
-    onAddToCartItem: (Product) -> Unit
+    onAddToCartItem: (Product) -> Unit,
+    onEditClick: () -> Unit
 ) {
 
     Box(
@@ -204,11 +205,13 @@ fun ProductDetailScreen(
                             }
 
                             Card {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = "Edit",
-                                    modifier = Modifier.padding(16.dp)
-                                )
+                                //IconButton(onClick = { onEditClick()  }) { // Llama a onEditClick al presionar el ícono
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "Edit",
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                //}
                             }
 
                         }
